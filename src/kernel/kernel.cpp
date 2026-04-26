@@ -33,7 +33,7 @@ static void showMenu()
     printString("|  run <name>   - Start a new process   |");
     printString("|  kill <id>    - Kill a process        |");
     printString("|  color <name> - Change background     |");
-    printString("|    black/blue/green/cyan/red/magenta  |");
+    printString("|    black / blue / cyan / magenta      |");
     printString("|  mouse        - Mouse position        |");
     printString("|  team         - Team info             |");
     printString("|  clear        - Clear screen          |");
@@ -55,10 +55,9 @@ static int parseKillCmd(char* cmd)
     return -1;
 }
 
-// Returns background color index for "color <name>" command, or -1 if no match
+// Returns bg color index or -1 if not a color command or -2 if bad color name
 static int parseColorCmd(char* cmd)
 {
-    // cmd must start with "color "
     if(!(cmd[0]=='c' && cmd[1]=='o' && cmd[2]=='l' &&
          cmd[3]=='o' && cmd[4]=='r' && cmd[5]==' '))
         return -1;
@@ -67,14 +66,10 @@ static int parseColorCmd(char* cmd)
 
     if(stringEquals(name, "black"))   return 0;
     if(stringEquals(name, "blue"))    return 1;
-    if(stringEquals(name, "green"))   return 2;
     if(stringEquals(name, "cyan"))    return 3;
-    if(stringEquals(name, "red"))     return 4;
     if(stringEquals(name, "magenta")) return 5;
-    if(stringEquals(name, "brown"))   return 6;
-    if(stringEquals(name, "grey"))    return 7;
 
-    return -2;  // invalid color name
+    return -2;
 }
 
 void handleCommand(char* command)
@@ -112,20 +107,17 @@ void handleCommand(char* command)
         printString(" terminated. Memory freed.");
         printMemoryStatus();
     }
-    else if(parseColorCmd(command) >= -1)
+    else if(parseColorCmd(command) != -1)
     {
         int bg = parseColorCmd(command);
         if(bg == -2)
         {
-            printString("Unknown color.");
-            printString("Use: black blue green cyan red magenta brown grey");
+            printString("Invalid color. Available: black  blue  cyan  magenta");
         }
         else
         {
             setColor((unsigned char)bg);
             clearScreen();
-            printStringNoNewLine("Background changed. Type 'color black' to reset.  ");
-            printString("");
             printStringNoNewLine("> ");
         }
     }
